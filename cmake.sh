@@ -1,5 +1,6 @@
 #!/bin/sh
 
+set -e
 cd ~/llvm-project/
 rm -rf build
 mkdir build

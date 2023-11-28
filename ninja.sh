@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd ~/llvm-project/build/
-ninja -j60 $@
+time ninja -j60 $@
