@@ -18,7 +18,7 @@ cmake \
 	-DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind" \
 	-DLLVM_DEFAULT_TARGET_TRIPLE=x86_64-redhat-linux-gnu \
 	-DLLVM_ENABLE_DUMP=ON \
-	-DLLVM_ENABLE_ASSERTIONS=OFF \
+	-DLLVM_ENABLE_ASSERTIONS=ON \
 	-DCMAKE_BUILD_TYPE=Debug \
 	-DCMAKE_C_FLAGS="-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer" \
 	-DCMAKE_CXX_FLAGS="-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer" \
