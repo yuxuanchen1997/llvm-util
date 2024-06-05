@@ -2,6 +2,13 @@
 
 set -e
 cd ~/llvm-project/
+if [ -d build ]; then
+  read -p "Build directory exists. Are you sure? [y/N] " -n 1 -r
+  echo
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    exit 1
+  fi
+fi  
 rm -rf build
 mkdir build
 cd build
@@ -19,7 +26,7 @@ cmake \
 	-DLLVM_DEFAULT_TARGET_TRIPLE=x86_64-redhat-linux-gnu \
 	-DLLVM_ENABLE_DUMP=ON \
 	-DLLVM_ENABLE_ASSERTIONS=ON \
-	-DCMAKE_BUILD_TYPE=Debug \
+	-DCMAKE_BUILD_TYPE=RelWithDebInfo \
 	-DCMAKE_C_FLAGS="-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer" \
 	-DCMAKE_CXX_FLAGS="-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer" \
 	-DLLVM_APPEND_VC_REV=OFF \
