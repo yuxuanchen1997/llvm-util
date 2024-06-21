@@ -1,0 +1,27 @@
+#!/bin/sh
+
+LLVM_VERSION=17
+
+set -e 
+cd ~/fbsource
+if ! [[ -z "$(sl status)" ]]; then
+    echo "fbsource repo contains changes"
+    exit 1
+fi
+
+mkdir -p ~/local/build-llvm-fb/
+cd ~/local/build-llvm-fb
+rm -rf $LLVM_VERSION
+
+fbpython ~/fbsource/fbcode/compilers/scripts/setup-llvm-fb.py \
+    --srcdir ~/local/server-llvm-17/llvm-project/llvm \
+    --version $LLVM_VERSION \
+    --enable-projects clang compiler-rt lld \
+    --platform platform010
+
+fbpython $LLVM_VERSION/platform010/build.py
+fbpython $LLVM_VERSION/platform010/install.py
+fbpython $LLVM_VERSION/platform010/update.py
+
+cd ~/fbsource
+sl commit -m "Local setup for LLVM-$LLVM_VERSION on $(date)"
