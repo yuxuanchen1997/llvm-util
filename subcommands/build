@@ -1,4 +1,9 @@
 #!/bin/bash
 
+if ! [ -d $LLVM_PROJECT_ROOT/build ]; then
+  exec $LLVM_UTIL_ROOT/subcommands/rebuild $@
+  exit 0
+fi
+
 cd $LLVM_PROJECT_ROOT/build/
 ninja -j60 $@

@@ -3,7 +3,7 @@
 set -e
 cd $LLVM_PROJECT_ROOT/
 if [ -d build ]; then
-  read -p "Build directory exists. Are you sure? [y/N] " -n 1 -r
+  read -p "This command triggers a rebuild. Are you sure? [y/N] " -n 1 -r
   echo
   if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     exit 1

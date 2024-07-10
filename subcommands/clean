@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if [ -z $LLVM_PROJECT_ROOT ]; then
+  exit 0
+fi
+
+rm -rf $LLVM_PROJECT_ROOT/build/
