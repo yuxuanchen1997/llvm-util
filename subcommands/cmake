@@ -32,4 +32,4 @@ cmake \
 	-DLLVM_APPEND_VC_REV=OFF \
 	../llvm
 
-~/llvm-util/ninja.sh $@
+$LLVM_UTIL_ROOT/subcommands/ninja $@

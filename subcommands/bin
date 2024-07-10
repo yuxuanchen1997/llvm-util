@@ -1,0 +1,3 @@
+#!/bin/sh
+
+$LLVM_PROJECT_ROOT/build/bin/$1 ${@:2}

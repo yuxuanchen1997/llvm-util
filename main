@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+export LLVM_UTIL_ROOT=$(dirname ${BASH_SOURCE[0]})
+
 CWD=$(pwd)
 while [[ $CWD != "/" && $(basename $CWD) != "llvm-project" ]]; do
   CWD=$(dirname $CWD)
@@ -14,4 +16,10 @@ else
   exit 1
 fi
 
-~/llvm-util/$1.sh ${@:2}
+if [ -z "$1" ]; then
+  echo "Missing subcommand. Possible subcommands are"
+  ls $LLVM_UTIL_ROOT/subcommands
+  exit 2
+fi
+
+$LLVM_UTIL_ROOT/subcommands/$1 ${@:2}
