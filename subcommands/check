@@ -4,4 +4,7 @@ if [ -z $1 ]; then
   echo "No rules to check."
 fi
 
-$LLVM_UTIL_ROOT/subcommands/build check-$1
+for target in "$@"
+do
+  $LLVM_UTIL_ROOT/subcommands/build check-"$target"
+done
