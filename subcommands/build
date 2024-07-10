@@ -5,5 +5,15 @@ if ! [ -d $LLVM_PROJECT_ROOT/build ]; then
   exit 0
 fi
 
+# Count how many CPUs there are on the system.
+# Save four of them so that we aren't locking the system up.
+USE_CPU=$(nproc --ignore=4)
+
+# on systems that CPU cores are too few, just use ninja default concurrency.
+if [ $USE_CPU -lt 4 ]; then
+  unset $USE_CPU
+fi
+
 cd $LLVM_PROJECT_ROOT/build/
-ninja -j60 $@
+export NINJA_STATUS="[%f/%t] (%e s)  "
+/usr/bin/time --format="Build Time: %E" ninja -j$USE_CPU $@
