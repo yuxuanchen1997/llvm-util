@@ -22,4 +22,12 @@ if [ -z "$1" ]; then
   exit 2
 fi
 
-$LLVM_UTIL_ROOT/subcommands/$1 ${@:2}
+SUBCOMMAND="$1"
+SUBCOMMAND_PATH=$LLVM_UTIL_ROOT/subcommands/$SUBCOMMAND
+
+if ! [ -f $SUBCOMMAND_PATH ]; then
+  echo "Subcommand '$SUBCOMMAND' not found"
+  exit 2
+fi
+
+$SUBCOMMAND_PATH ${@:2}
