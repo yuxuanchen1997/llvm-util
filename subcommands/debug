@@ -1,0 +1,4 @@
+#!/bin/sh
+
+$LLVM_UTIL_ROOT/subcommands/build
+exec lldb -- $LLVM_PROJECT_ROOT/build/bin/$1 ${@:2}
