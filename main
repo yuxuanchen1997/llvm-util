@@ -9,7 +9,6 @@ while [[ $CWD != "/" && $(basename $CWD) != "llvm-project" ]]; do
 done
 
 if [[ $(basename $CWD) == "llvm-project" ]]; then
-  echo "Found LLVM Root: $CWD"
   export LLVM_PROJECT_ROOT=$CWD
 else
   echo "Did not find llvm-project root!"
