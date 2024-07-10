@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-export LLVM_UTIL_ROOT=$(dirname ${BASH_SOURCE[0]})
+export LLVM_UTIL_ROOT=$(dirname $(realpath ${BASH_SOURCE[0]}))
 
 CWD=$(pwd)
 while [[ $CWD != "/" && $(basename $CWD) != "llvm-project" ]]; do
@@ -11,6 +11,11 @@ done
 if [[ $(basename $CWD) == "llvm-project" ]]; then
   export LLVM_PROJECT_ROOT=$CWD
 else
+  echo "Using default llvm-project root: $HOME/llvm-project/"
+  export LLVM_PROJECT_ROOT=$HOME/llvm-project/
+fi
+
+if ! [[ -d $LLVM_PROJECT_ROOT ]]; then
   echo "Did not find llvm-project root!"
   exit 1
 fi
