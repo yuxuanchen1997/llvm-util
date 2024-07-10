@@ -1,3 +1,4 @@
 #!/bin/bash
 
+set -e
 $LLVM_UTIL_ROOT/subcommands/run llvm-lit -v $@
