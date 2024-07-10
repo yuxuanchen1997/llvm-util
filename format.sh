@@ -1,4 +1,4 @@
 #!/bin/bash
 
-cd ~/llvm-project/
+cd $LLVM_PROJECT_ROOT
 git diff -U0 --no-color HEAD^ | python3 clang/tools/clang-format/clang-format-diff.py -i -p1

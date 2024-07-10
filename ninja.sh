@@ -1,4 +1,4 @@
 #!/bin/bash
 
-cd ~/llvm-project/build/
+cd $LLVM_PROJECT_ROOT/build/
 time ninja -j60 $@

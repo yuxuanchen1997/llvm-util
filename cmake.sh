@@ -1,7 +1,7 @@
 #!/bin/sh
 
 set -e
-cd ~/llvm-project/
+cd $LLVM_PROJECT_ROOT/
 if [ -d build ]; then
   read -p "Build directory exists. Are you sure? [y/N] " -n 1 -r
   echo

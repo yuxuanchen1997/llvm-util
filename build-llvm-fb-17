@@ -22,6 +22,7 @@ fbpython ~/fbsource/fbcode/compilers/scripts/setup-llvm-fb.py \
 fbpython $LLVM_VERSION/platform010/build.py
 fbpython $LLVM_VERSION/platform010/install.py
 fbpython $LLVM_VERSION/platform010/update.py
+fbpython $LLVM_VERSION/platform010/update.py --override-version 15
 
 cd ~/fbsource
 sl commit -m "Local setup for LLVM-$LLVM_VERSION on $(date)"
