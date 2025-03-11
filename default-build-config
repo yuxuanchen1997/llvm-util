@@ -1,0 +1,17 @@
+CMAKE_CXX_COMPILER=clang++
+CMAKE_C_COMPILER=clang
+CMAKE_ASM_COMPILER=clang
+CMAKE_ASM_COMPILER_ID=Clang
+LLVM_TARGETS_TO_BUILD="X86"
+LLVM_USE_LINKER=lld
+LLVM_ENABLE_SPHINX=ON
+LLVM_ENABLE_ZLIB=ON
+LLVM_ENABLE_PROJECTS="clang;clang-tools-extra;compiler-rt;lld"
+LLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind"
+LLVM_DEFAULT_TARGET_TRIPLE=x86_64-redhat-linux-gnu
+LLVM_ENABLE_DUMP=ON
+LLVM_ENABLE_ASSERTIONS=ON
+CMAKE_BUILD_TYPE=Debug
+CMAKE_C_FLAGS="-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer"
+CMAKE_CXX_FLAGS="-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer"
+LLVM_APPEND_VC_REV=OFF

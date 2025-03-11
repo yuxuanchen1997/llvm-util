@@ -11,17 +11,17 @@ done
 if [[ $(basename $CWD) == "llvm-project" ]]; then
   export LLVM_PROJECT_ROOT=$CWD
 else
-  echo "Using default llvm-project root: $HOME/llvm-project/"
+  >&2 echo "Using default llvm-project root: $HOME/llvm-project/"
   export LLVM_PROJECT_ROOT=$HOME/llvm-project/
 fi
 
 if ! [[ -d $LLVM_PROJECT_ROOT ]]; then
-  echo "Did not find llvm-project root!"
+  >&2 echo "Did not find llvm-project root!"
   exit 1
 fi
 
 if [ -z "$1" ]; then
-  echo "Missing subcommand. Possible subcommands are"
+  >&2 echo "Missing subcommand. Possible subcommands are"
   ls $LLVM_UTIL_ROOT/subcommands
   exit 2
 fi
@@ -30,7 +30,7 @@ SUBCOMMAND="$1"
 SUBCOMMAND_PATH=$LLVM_UTIL_ROOT/subcommands/$SUBCOMMAND
 
 if ! [ -f $SUBCOMMAND_PATH ]; then
-  echo "Subcommand '$SUBCOMMAND' not found"
+  >&2 echo "Subcommand '$SUBCOMMAND' not found"
   exit 2
 fi
 

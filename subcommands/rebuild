@@ -13,24 +13,16 @@ rm -rf build
 mkdir build
 cd build
 
-cmake \
-	-G Ninja \
-	-DCMAKE_CXX_COMPILER=clang++ \
-	-DCMAKE_C_COMPILER=clang \
-	-DCMAKE_ASM_COMPILER=clang \
-	-DCMAKE_ASM_COMPILER_ID=Clang \
-	-DLLVM_TARGETS_TO_BUILD="X86" \
-	-DLLVM_USE_LINKER=lld \
-	-DLLVM_ENABLE_SPHINX=ON \
-	-DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;compiler-rt;lld" \
-	-DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind" \
-	-DLLVM_DEFAULT_TARGET_TRIPLE=x86_64-redhat-linux-gnu \
-	-DLLVM_ENABLE_DUMP=ON \
-	-DLLVM_ENABLE_ASSERTIONS=ON \
-	-DCMAKE_BUILD_TYPE=RelWithDebInfo \
-	-DCMAKE_C_FLAGS="-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer" \
-	-DCMAKE_CXX_FLAGS="-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer" \
-	-DLLVM_APPEND_VC_REV=OFF \
-	../llvm
+BUILD_CONFIG=$LLVM_PROJECT_ROOT/build-config
+
+# If a build config is not set up, add this file to the repo. 
+# This is by default ignored by .gitignore
+if [ ! -f $BUILD_CONFIG ]; then
+  cp -f $LLVM_UTIL_ROOT/default-build-config $BUILD_CONFIG
+fi
+
+CMAKE_FLAGS=$(awk '{print "-D" $0}' $BUILD_CONFIG)
+
+eval cmake -G Ninja $CMAKE_FLAGS ../llvm
 
 $LLVM_UTIL_ROOT/subcommands/build $@
