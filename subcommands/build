@@ -2,7 +2,7 @@
 
 set -e
 
-if ! [ -d $LLVM_PROJECT_ROOT/build ]; then
+if ! [ -f $LLVM_PROJECT_ROOT/build/build.ninja ]; then
   exec $LLVM_UTIL_ROOT/subcommands/rebuild $@
   exit 0
 fi
