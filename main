@@ -40,15 +40,15 @@ function set_llvm_project_root() {
     >&2 echo "llvm-project root is set to $LLVM_PROJECT_ROOT"
   else
     CWD=$(pwd)
-    while [[ $CWD != "/" && $(basename $CWD) != "llvm-project" ]]; do
-      CWD=$(dirname $CWD)
+    while [[ "$CWD" != "/" && $(basename "$CWD") != "llvm-project" ]]; do
+      CWD=$(dirname "$CWD")
     done
 
-    if [[ $(basename $CWD) == "llvm-project" ]]; then
-      export LLVM_PROJECT_ROOT=$CWD
+    if [[ $(basename "$CWD") == "llvm-project" ]]; then
+      export LLVM_PROJECT_ROOT="$CWD"
       >&2 echo "Using CWD as llvm-project root: $LLVM_PROJECT_ROOT"
     else
-      export LLVM_PROJECT_ROOT=$HOME/llvm-project/
+      export LLVM_PROJECT_ROOT="$HOME/llvm-project/"
       >&2 echo "Using default llvm-project root: $LLVM_PROJECT_ROOT"
     fi
   fi
@@ -62,13 +62,13 @@ if [ -z "$1" ]; then
 fi
 
 SUBCOMMAND="$1"
-SUBCOMMAND_PATH=$LLVM_UTIL_ROOT/subcommands/$SUBCOMMAND
+SUBCOMMAND_PATH="$LLVM_UTIL_ROOT/subcommands/$SUBCOMMAND"
 
-if ! [ -f $SUBCOMMAND_PATH ]; then
+if ! [ -f "$SUBCOMMAND_PATH" ]; then
   >&2 echo "Subcommand '$SUBCOMMAND' not found"
   exit 2
 fi
 
 set_llvm_project_root
 
-$SUBCOMMAND_PATH ${@:2}
+"$SUBCOMMAND_PATH" "${@:2}"

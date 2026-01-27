@@ -21,8 +21,8 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
   exit 0
 fi
 
-if [ -z $LLVM_PROJECT_ROOT ]; then
+if [ -z "$LLVM_PROJECT_ROOT" ]; then
   exit 0
 fi
 
-rm -rf $LLVM_PROJECT_ROOT/build/
+rm -rf "$LLVM_PROJECT_ROOT/build/"

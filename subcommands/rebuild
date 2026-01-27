@@ -29,7 +29,7 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
   exit 0
 fi
 
-cd $LLVM_PROJECT_ROOT/
+cd "$LLVM_PROJECT_ROOT/"
 if [ -d build ]; then
   read -p "This command triggers a rebuild. Are you sure? [y/N] " -n 1 -r
   echo
@@ -41,16 +41,16 @@ rm -rf build
 mkdir build
 cd build
 
-BUILD_CONFIG=$LLVM_PROJECT_ROOT/build-config
+BUILD_CONFIG="$LLVM_PROJECT_ROOT/build-config"
 
-# If a build config is not set up, add this file to the repo. 
+# If a build config is not set up, add this file to the repo.
 # This is by default ignored by .gitignore
-if [ ! -f $BUILD_CONFIG ]; then
-  cp -f $LLVM_UTIL_ROOT/default-build-config $BUILD_CONFIG
+if [ ! -f "$BUILD_CONFIG" ]; then
+  cp -f "$LLVM_UTIL_ROOT/default-build-config" "$BUILD_CONFIG"
 fi
 
-CMAKE_FLAGS=$(awk '{print "-D" $0}' $BUILD_CONFIG)
+CMAKE_FLAGS=$(awk '{print "-D" $0}' "$BUILD_CONFIG")
 
 eval cmake -G Ninja $CMAKE_FLAGS ../llvm
 
-$LLVM_UTIL_ROOT/subcommands/build $@
+"$LLVM_UTIL_ROOT/subcommands/build" "$@"

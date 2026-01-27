@@ -27,8 +27,8 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
   exit 0
 fi
 
-if ! [ -f $LLVM_PROJECT_ROOT/build/build.ninja ]; then
-  exec $LLVM_UTIL_ROOT/subcommands/rebuild $@
+if ! [ -f "$LLVM_PROJECT_ROOT/build/build.ninja" ]; then
+  exec "$LLVM_UTIL_ROOT/subcommands/rebuild" "$@"
   exit 0
 fi
 
@@ -41,6 +41,6 @@ if [ $USE_CPU -lt 4 ]; then
   unset $USE_CPU
 fi
 
-cd $LLVM_PROJECT_ROOT/build/
+cd "$LLVM_PROJECT_ROOT/build/"
 export NINJA_STATUS="[%f/%t] (%e s)  "
-/usr/bin/time --format="Build Time: %E" ninja -j$USE_CPU $@
+/usr/bin/time --format="Build Time: %E" ninja -j$USE_CPU "$@"

@@ -24,7 +24,7 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
   exit 0
 fi
 
-if [ -z $1 ]; then
+if [ -z "$1" ]; then
   >&2 echo "Error: Missing required argument: target"
   >&2 echo
   usage >&2
@@ -33,5 +33,5 @@ fi
 
 for target in "$@"
 do
-  $LLVM_UTIL_ROOT/subcommands/build check-"$target"
+  "$LLVM_UTIL_ROOT/subcommands/build" check-"$target"
 done

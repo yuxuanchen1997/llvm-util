@@ -33,5 +33,5 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-$LLVM_UTIL_ROOT/subcommands/build
-exec lldb -- $LLVM_PROJECT_ROOT/build/bin/$1 ${@:2}
+"$LLVM_UTIL_ROOT/subcommands/build"
+exec lldb -- "$LLVM_PROJECT_ROOT/build/bin/$1" "${@:2}"

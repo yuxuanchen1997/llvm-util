@@ -23,5 +23,5 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
   exit 0
 fi
 
-cd $LLVM_PROJECT_ROOT
+cd "$LLVM_PROJECT_ROOT"
 git diff -U0 --no-color HEAD^ | python3 clang/tools/clang-format/clang-format-diff.py -i -p1

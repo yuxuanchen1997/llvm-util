@@ -32,4 +32,4 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-$LLVM_UTIL_ROOT/subcommands/run llvm-lit -v $@
+"$LLVM_UTIL_ROOT/subcommands/run" llvm-lit -v "$@"
