@@ -25,7 +25,9 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 fi
 
 if [ -z $1 ]; then
-  echo "No rules to check."
+  >&2 echo "Error: Missing required argument: target"
+  >&2 echo
+  usage >&2
   exit 1
 fi
 

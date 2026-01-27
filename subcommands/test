@@ -25,4 +25,11 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
   exit 0
 fi
 
+if [ -z "$1" ]; then
+  >&2 echo "Error: Missing required argument: test-paths"
+  >&2 echo
+  usage >&2
+  exit 1
+fi
+
 $LLVM_UTIL_ROOT/subcommands/run llvm-lit -v $@
