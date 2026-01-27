@@ -38,7 +38,7 @@ USE_CPU=$(nproc --ignore=4)
 
 # on systems that CPU cores are too few, just use ninja default concurrency.
 if [ $USE_CPU -lt 4 ]; then
-  unset $USE_CPU
+  unset USE_CPU
 fi
 
 cd "$LLVM_PROJECT_ROOT/build/"

@@ -22,7 +22,8 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 fi
 
 if [ -z "$LLVM_PROJECT_ROOT" ]; then
-  exit 0
+  >&2 echo "Error: LLVM_PROJECT_ROOT is not set"
+  exit 1
 fi
 
 rm -rf "$LLVM_PROJECT_ROOT/build/"
