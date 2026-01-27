@@ -2,6 +2,25 @@
 
 set -e
 
+usage() {
+  cat <<EOF
+Usage: $(basename "$0")
+
+Remove the LLVM build directory.
+
+Options:
+  -h, --help  Show this help message
+
+Example:
+  $(basename "$0")  # Remove build/
+EOF
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  usage
+  exit 0
+fi
+
 if [ -z $LLVM_PROJECT_ROOT ]; then
   exit 0
 fi

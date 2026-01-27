@@ -2,6 +2,31 @@
 
 set -e
 
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") [ninja-targets...]
+
+Perform an incremental build of the LLVM project using ninja.
+If no build directory exists, automatically runs 'rebuild' first.
+
+Arguments:
+  ninja-targets  Optional ninja targets to build (default: all)
+
+Options:
+  -h, --help     Show this help message
+
+Examples:
+  $(basename "$0")              # Build all targets
+  $(basename "$0") clang        # Build only clang
+  $(basename "$0") check-clang  # Build and run clang tests
+EOF
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  usage
+  exit 0
+fi
+
 if ! [ -f $LLVM_PROJECT_ROOT/build/build.ninja ]; then
   exec $LLVM_UTIL_ROOT/subcommands/rebuild $@
   exit 0

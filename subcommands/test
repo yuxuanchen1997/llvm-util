@@ -1,4 +1,28 @@
 #!/bin/sh
 
 set -e
+
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") <test-paths...>
+
+Run LLVM tests using llvm-lit.
+
+Arguments:
+  test-paths  Paths to test files or directories
+
+Options:
+  -h, --help  Show this help message
+
+Examples:
+  $(basename "$0") clang/test/Sema/
+  $(basename "$0") llvm/test/CodeGen/X86/add.ll
+EOF
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  usage
+  exit 0
+fi
+
 $LLVM_UTIL_ROOT/subcommands/run llvm-lit -v $@

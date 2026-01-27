@@ -1,5 +1,28 @@
 #!/bin/sh
 
 set -e
+
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") <binary>
+
+Print the absolute path to a built binary.
+
+Arguments:
+  binary  Name of the binary (e.g., clang, opt)
+
+Options:
+  -h, --help  Show this help message
+
+Example:
+  $(basename "$0") clang  # Prints /path/to/llvm-project/build/bin/clang
+EOF
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  usage
+  exit 0
+fi
+
 $LLVM_UTIL_ROOT/subcommands/build 1>&2
 realpath $LLVM_PROJECT_ROOT/build/bin/$1 

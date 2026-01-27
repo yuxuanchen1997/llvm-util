@@ -1,5 +1,30 @@
 #!/bin/sh
 
 set -e
+
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") <binary> [args...]
+
+Build and launch a binary in lldb for debugging.
+
+Arguments:
+  binary  Name of the binary to debug (e.g., clang, opt)
+  args    Arguments to pass to the binary
+
+Options:
+  -h, --help  Show this help message
+
+Examples:
+  $(basename "$0") clang -c test.c
+  $(basename "$0") opt -O2 input.ll
+EOF
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  usage
+  exit 0
+fi
+
 $LLVM_UTIL_ROOT/subcommands/build
 exec lldb -- $LLVM_PROJECT_ROOT/build/bin/$1 ${@:2}

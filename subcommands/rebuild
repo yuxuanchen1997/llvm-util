@@ -1,6 +1,34 @@
 #!/bin/sh
 
 set -e
+
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") [ninja-targets...]
+
+Perform a full clean build with CMake configuration.
+Removes existing build directory and reconfigures from scratch.
+
+If no build-config file exists in LLVM_PROJECT_ROOT, copies the default
+configuration from the utility root.
+
+Arguments:
+  ninja-targets  Optional ninja targets to build after configuration
+
+Options:
+  -h, --help     Show this help message
+
+Examples:
+  $(basename "$0")         # Full rebuild of all targets
+  $(basename "$0") clang   # Full rebuild, then build only clang
+EOF
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  usage
+  exit 0
+fi
+
 cd $LLVM_PROJECT_ROOT/
 if [ -d build ]; then
   read -p "This command triggers a rebuild. Are you sure? [y/N] " -n 1 -r

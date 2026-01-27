@@ -3,6 +3,38 @@ set -e
 
 export LLVM_UTIL_ROOT=$(dirname $(realpath ${BASH_SOURCE[0]}))
 
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") <subcommand> [args...]
+
+LLVM project build utility.
+
+Subcommands:
+  build       Incremental build using ninja
+  rebuild     Full clean build with CMake configuration
+  clean       Remove the build directory
+  check       Run test targets (check-<target>)
+  run         Build and execute a binary
+  debug       Build and launch a binary in lldb
+  test        Run tests using llvm-lit
+  format      Format code changes using clang-format-diff
+  show-path   Print the path to a built binary
+
+Options:
+  -h, --help  Show this help message
+
+Environment:
+  LLVM_PROJECT_ROOT  Override the LLVM project directory
+
+Run '$(basename "$0") <subcommand> -h' for subcommand-specific help.
+EOF
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  usage
+  exit 0
+fi
+
 function set_llvm_project_root() {
   if [ -v LLVM_PROJECT_ROOT ]; then
     >&2 echo "llvm-project root is set to $LLVM_PROJECT_ROOT"
@@ -23,8 +55,9 @@ function set_llvm_project_root() {
 }
 
 if [ -z "$1" ]; then
-  >&2 echo "Missing subcommand. Possible subcommands are"
-  ls $LLVM_UTIL_ROOT/subcommands
+  >&2 echo "Error: Missing subcommand."
+  >&2 echo
+  usage >&2
   exit 2
 fi
 

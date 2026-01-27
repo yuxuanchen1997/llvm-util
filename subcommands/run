@@ -1,5 +1,31 @@
 #!/bin/sh
 
 set -e
+
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") <binary> [args...]
+
+Build and execute a binary from the LLVM build directory.
+
+Arguments:
+  binary  Name of the binary to run (e.g., clang, llvm-lit, opt)
+  args    Arguments to pass to the binary
+
+Options:
+  -h, --help  Show this help message
+
+Examples:
+  $(basename "$0") clang --version
+  $(basename "$0") opt -O2 -S input.ll
+  $(basename "$0") llvm-lit test/file.ll
+EOF
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  usage
+  exit 0
+fi
+
 $LLVM_UTIL_ROOT/subcommands/build
 $LLVM_PROJECT_ROOT/build/bin/$1 ${@:2}

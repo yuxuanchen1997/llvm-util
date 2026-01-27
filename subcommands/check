@@ -1,5 +1,29 @@
 #!/bin/sh
 
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") <target> [targets...]
+
+Run LLVM test targets (check-<target>).
+
+Arguments:
+  target  One or more test targets to run (without 'check-' prefix)
+
+Options:
+  -h, --help  Show this help message
+
+Examples:
+  $(basename "$0") clang           # Run check-clang
+  $(basename "$0") clang llvm      # Run check-clang and check-llvm
+  $(basename "$0") clang-format    # Run check-clang-format
+EOF
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  usage
+  exit 0
+fi
+
 if [ -z $1 ]; then
   echo "No rules to check."
   exit 1
