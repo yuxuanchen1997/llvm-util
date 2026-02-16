@@ -1,0 +1,39 @@
+#!/bin/sh
+
+set -e
+
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") <target> [targets...]
+
+Run GCC test targets (check-<target>).
+
+Arguments:
+  target  One or more test targets to run (without 'check-' prefix)
+
+Options:
+  -h, --help  Show this help message
+
+Examples:
+  $(basename "$0") gcc           # Run check-gcc
+  $(basename "$0") gcc g++       # Run check-gcc and check-g++
+  $(basename "$0") gcc-c++       # Run check-gcc-c++
+EOF
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  usage
+  exit 0
+fi
+
+if [ -z "$1" ]; then
+  >&2 echo "Error: Missing required argument: target"
+  >&2 echo
+  usage >&2
+  exit 1
+fi
+
+for target in "$@"
+do
+  "$GCC_UTIL_ROOT/subcommands/build" check-"$target"
+done

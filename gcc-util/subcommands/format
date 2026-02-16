@@ -1,0 +1,28 @@
+#!/bin/sh
+
+set -e
+
+usage() {
+  cat <<EOF
+Usage: $(basename "$0")
+
+Format code changes in the most recent commit using clang-format-diff.
+
+Applies clang-format to lines changed between HEAD^ and HEAD.
+GCC uses clang-format for C/C++ code formatting.
+
+Options:
+  -h, --help  Show this help message
+
+Example:
+  $(basename "$0")  # Format changes from the last commit
+EOF
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  usage
+  exit 0
+fi
+
+cd "$GCC_PROJECT_ROOT"
+git diff -U0 --no-color HEAD^ | clang-format-diff.py -i -p1

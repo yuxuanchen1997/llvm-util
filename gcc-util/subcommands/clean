@@ -1,0 +1,29 @@
+#!/bin/sh
+
+set -e
+
+usage() {
+  cat <<EOF
+Usage: $(basename "$0")
+
+Remove the GCC build directory.
+
+Options:
+  -h, --help  Show this help message
+
+Example:
+  $(basename "$0")  # Remove build/
+EOF
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  usage
+  exit 0
+fi
+
+if [ -z "$GCC_PROJECT_ROOT" ]; then
+  >&2 echo "Error: GCC_PROJECT_ROOT is not set"
+  exit 1
+fi
+
+rm -rf "$GCC_PROJECT_ROOT/build/"

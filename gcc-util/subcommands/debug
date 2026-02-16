@@ -1,0 +1,37 @@
+#!/bin/bash
+
+set -e
+
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") <binary> [args...]
+
+Build and launch a binary in gdb for debugging.
+
+Arguments:
+  binary  Name of the binary to debug (e.g., gcc, g++, cc1)
+  args    Arguments to pass to the binary
+
+Options:
+  -h, --help  Show this help message
+
+Examples:
+  $(basename "$0") gcc -c test.c
+  $(basename "$0") cc1 test.c -O2
+EOF
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  usage
+  exit 0
+fi
+
+if [ -z "$1" ]; then
+  >&2 echo "Error: Missing required argument: binary"
+  >&2 echo
+  usage >&2
+  exit 1
+fi
+
+"$GCC_UTIL_ROOT/subcommands/build"
+exec gdb --args "$GCC_PROJECT_ROOT/build/gcc/$1" "${@:2}"

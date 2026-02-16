@@ -1,0 +1,74 @@
+#!/bin/bash
+set -e
+
+export GCC_UTIL_ROOT=$(dirname $(realpath ${BASH_SOURCE[0]}))
+
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") <subcommand> [args...]
+
+GCC project build utility.
+
+Subcommands:
+  build       Incremental build using make
+  rebuild     Full clean build with configure
+  clean       Remove the build directory
+  check       Run test suites (make check-<target>)
+  run         Build and execute a binary
+  debug       Build and launch a binary in gdb
+  test        Run tests using dejagnu
+  format      Format code changes using clang-format-diff
+  show-path   Print the path to a built binary
+
+Options:
+  -h, --help  Show this help message
+
+Environment:
+  GCC_PROJECT_ROOT  Override the GCC project directory
+
+Run '$(basename "$0") <subcommand> -h' for subcommand-specific help.
+EOF
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  usage
+  exit 0
+fi
+
+function set_gcc_project_root() {
+  if [ -v GCC_PROJECT_ROOT ]; then
+    >&2 echo "gcc-project root is set to $GCC_PROJECT_ROOT"
+  else
+    CWD=$(pwd)
+    while [[ "$CWD" != "/" && $(basename "$CWD") != "gcc" ]]; do
+      CWD=$(dirname "$CWD")
+    done
+
+    if [[ $(basename "$CWD") == "gcc" ]]; then
+      export GCC_PROJECT_ROOT="$CWD"
+      >&2 echo "Using CWD as gcc-project root: $GCC_PROJECT_ROOT"
+    else
+      export GCC_PROJECT_ROOT="$HOME/gcc/"
+      >&2 echo "Using default gcc-project root: $GCC_PROJECT_ROOT"
+    fi
+  fi
+}
+
+if [ -z "$1" ]; then
+  >&2 echo "Error: Missing subcommand."
+  >&2 echo
+  usage >&2
+  exit 2
+fi
+
+SUBCOMMAND="$1"
+SUBCOMMAND_PATH="$GCC_UTIL_ROOT/subcommands/$SUBCOMMAND"
+
+if ! [ -f "$SUBCOMMAND_PATH" ]; then
+  >&2 echo "Subcommand '$SUBCOMMAND' not found"
+  exit 2
+fi
+
+set_gcc_project_root
+
+"$SUBCOMMAND_PATH" "${@:2}"

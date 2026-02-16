@@ -1,0 +1,37 @@
+#!/bin/bash
+
+set -e
+
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") [make-targets...]
+
+Perform an incremental build using make.
+
+If the build directory does not exist, runs a full rebuild first.
+
+Arguments:
+  make-targets  Optional make targets to build
+
+Options:
+  -h, --help     Show this help message
+
+Examples:
+  $(basename "$0")           # Build all targets
+  $(basename "$0") gcc       # Build only gcc
+  $(basename "$0") -j4       # Build with 4 parallel jobs
+EOF
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  usage
+  exit 0
+fi
+
+cd "$GCC_PROJECT_ROOT/build"
+
+if [ -z "$1" ]; then
+  make "$@"
+else
+  make "$@"
+fi

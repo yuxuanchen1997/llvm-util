@@ -1,0 +1,17 @@
+--prefix=$HOME/gcc/install
+--enable-languages=c,c++,fortran,lto
+--enable-lto
+--enable-multilib
+--enable-threads=posix
+--enable-libstdcxx-time=yes
+--enable-libstdcxx-threads=yes
+--with-system-zlib
+--with-isl
+--disable-libmpx
+--disable-libvtv
+--disable-libquadmath
+--disable-libsanitizer
+--enable-checking=release
+--enable-bootstrap
+CFLAGS="-O2 -g -fno-omit-frame-pointer"
+CXXFLAGS="-O2 -g -fno-omit-frame-pointer"

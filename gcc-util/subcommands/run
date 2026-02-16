@@ -1,0 +1,38 @@
+#!/bin/bash
+
+set -e
+
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") <binary> [args...]
+
+Build and execute a binary from the GCC build directory.
+
+Arguments:
+  binary  Name of the binary to run (e.g., gcc, g++, gfortran)
+  args    Arguments to pass to the binary
+
+Options:
+  -h, --help  Show this help message
+
+Examples:
+  $(basename "$0") gcc --version
+  $(basename "$0") g++ -S test.cpp
+  $(basename "$0") gcc -c test.c
+EOF
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  usage
+  exit 0
+fi
+
+if [ -z "$1" ]; then
+  >&2 echo "Error: Missing required argument: binary"
+  >&2 echo
+  usage >&2
+  exit 1
+fi
+
+"$GCC_UTIL_ROOT/subcommands/build"
+"$GCC_PROJECT_ROOT/build/gcc/$1" "${@:2}"

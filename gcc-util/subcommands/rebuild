@@ -1,0 +1,72 @@
+#!/bin/bash
+
+set -e
+
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") [make-targets...]
+
+Perform a full clean build with configure.
+Removes existing build directory and reconfigures from scratch.
+
+If no build-config file exists in GCC_PROJECT_ROOT, copies the default
+configuration from the utility root.
+
+Arguments:
+  make-targets  Optional make targets to build after configuration
+
+Options:
+  -h, --help     Show this help message
+
+Examples:
+  $(basename "$0")         # Full rebuild of all targets
+  $(basename "$0") gcc     # Full rebuild, then build only gcc
+EOF
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  usage
+  exit 0
+fi
+
+cd "$GCC_PROJECT_ROOT/"
+if [ -d build ]; then
+  read -p "This command triggers a rebuild. Are you sure? [y/N] " -n 1 -r
+  echo
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    exit 1
+  fi
+fi
+rm -rf build
+mkdir build
+cd build
+
+BUILD_CONFIG="$GCC_PROJECT_ROOT/build-config"
+
+# If a build config is not set up, add this file to the repo.
+# This is by default ignored by .gitignore
+if [ ! -f "$BUILD_CONFIG" ]; then
+  cp -f "$GCC_UTIL_ROOT/default-build-config" "$BUILD_CONFIG"
+fi
+
+# Parse build config: lines starting with -- are configure flags,
+# lines with = are environment variables for configure
+CONFIGURE_FLAGS=""
+ENV_VARS=""
+
+while IFS= read -r line || [ -n "$line" ]; do
+  # Skip empty lines and comments
+  [[ -z "$line" || "$line" =~ ^# ]] && continue
+  
+  if [[ "$line" =~ ^-- ]]; then
+    # Substitute $HOME in configure flags
+    line=$(eval echo "$line")
+    CONFIGURE_FLAGS="$CONFIGURE_FLAGS $line"
+  elif [[ "$line" =~ = ]]; then
+    ENV_VARS="$ENV_VARS $line"
+  fi
+done < "$BUILD_CONFIG"
+
+eval $ENV_VARS ../configure $CONFIGURE_FLAGS
+
+"$GCC_UTIL_ROOT/subcommands/build" "$@"
