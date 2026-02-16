@@ -25,4 +25,4 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 fi
 
 cd "$GCC_PROJECT_ROOT"
-git diff -U0 --no-color HEAD^ | clang-format-diff.py -i -p1
+git diff -U0 --no-color HEAD^ | clang-format-diff -i -p1
