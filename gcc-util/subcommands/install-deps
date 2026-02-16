@@ -1,0 +1,58 @@
+#!/bin/bash
+
+set -e
+
+usage() {
+  cat <<EOF
+Usage: $(basename "$0")
+
+Install required dependencies for building GCC on Fedora.
+
+Installs the following packages:
+  - gmp-devel       GNU Multiple Precision Arithmetic Library
+  - mpfr-devel      Multiple Precision Floating-Point Library
+  - mpc-devel       Complex Number Library
+  - isl-devel       Integer Set Library (for loop optimization)
+  - clang           C/C++ compiler and clang-format for code formatting
+  - python3         Required for build scripts and clang-format-diff
+
+Options:
+  -h, --help  Show this help message
+
+Example:
+  $(basename "$0")  # Install all required dependencies
+EOF
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  usage
+  exit 0
+fi
+
+# Detect if running on Fedora/RHEL
+if [ -f /etc/fedora-release ]; then
+  PACKAGE_MANAGER="dnf"
+elif [ -f /etc/redhat-release ]; then
+  PACKAGE_MANAGER="dnf"
+else
+  >&2 echo "Error: This script only supports Fedora/RHEL-based systems."
+  >&2 echo "Detected system:"
+  if [ -f /etc/os-release ]; then
+    cat /etc/os-release | head -5
+  fi
+  exit 1
+fi
+
+echo "Installing GCC build dependencies using $PACKAGE_MANAGER..."
+
+sudo $PACKAGE_MANAGER install -y \
+  gmp-devel \
+  mpfr-devel \
+  libmpc-devel \
+  isl-devel \
+  clang \
+  python3
+
+echo "Dependencies installed successfully."
+echo
+echo "You can now run 'gcc-util rebuild' to build GCC."

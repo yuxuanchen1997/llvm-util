@@ -28,6 +28,13 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
   exit 0
 fi
 
+# If build directory doesn't exist, run a full rebuild first
+if [ ! -d "$GCC_PROJECT_ROOT/build" ]; then
+  >&2 echo "Build directory does not exist. Running full rebuild first..."
+  "$GCC_UTIL_ROOT/subcommands/rebuild" "$@"
+  exit 0
+fi
+
 cd "$GCC_PROJECT_ROOT/build"
 
 if [ -z "$1" ]; then

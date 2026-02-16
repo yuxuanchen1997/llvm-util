@@ -18,7 +18,8 @@ Subcommands:
   debug       Build and launch a binary in gdb
   test        Run tests using dejagnu
   format      Format code changes using clang-format-diff
-  show-path   Print the path to a built binary
+  show-path    Print the path to a built binary
+  install-deps  Install required build dependencies (Fedora)
 
 Options:
   -h, --help  Show this help message
