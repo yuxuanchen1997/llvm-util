@@ -6,7 +6,7 @@ usage() {
   cat <<EOF
 Usage: $(basename "$0") <binary> [args...]
 
-Build and execute a binary from the GCC build directory.
+Build, install, and execute a binary.
 
 Arguments:
   binary  Name of the binary to run (e.g., gcc, g++, gfortran)
@@ -35,4 +35,4 @@ if [ -z "$1" ]; then
 fi
 
 "$GCC_UTIL_ROOT/subcommands/build"
-"$GCC_PROJECT_ROOT/build/gcc/$1" "${@:2}"
+"$GCC_PROJECT_ROOT/install/bin/$1" "${@:2}"

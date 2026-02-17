@@ -36,9 +36,5 @@ if [ ! -d "$GCC_PROJECT_ROOT/build" ]; then
 fi
 
 cd "$GCC_PROJECT_ROOT/build"
-
-if [ -z "$1" ]; then
-  make "$@"
-else
-  make "$@"
-fi
+make "$@"
+make install
