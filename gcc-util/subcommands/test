@@ -9,14 +9,15 @@ Usage: $(basename "$0") <test-paths...>
 Run GCC tests using dejagnu (runtest).
 
 Arguments:
-  test-paths  Paths to test files or directories
+  test-paths  Paths to test files (e.g., gcc.dg/ifcvt-fabs-1.c)
 
 Options:
   -h, --help  Show this help message
 
 Examples:
-  $(basename "$0") gcc.c-torture/execute
-  $(basename "$0") gcc.dg/test.c
+  $(basename "$0") gcc.dg/ifcvt-fabs-1.c
+  $(basename "$0") gcc.dg/vect/vect-1.c
+  $(basename "$0") gcc.c-torture/execute/20000113-1.c
 EOF
 }
 
@@ -32,5 +33,25 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-cd "$GCC_PROJECT_ROOT/build"
-make check RUNTESTFLAGS="$@"
+# Convert file paths to dejagnu RUNTESTFLAGS format.
+# e.g. gcc.dg/ifcvt-fabs-1.c       -> dg.exp=ifcvt-fabs-1.c
+#      gcc.dg/vect/vect-1.c         -> vect.exp=vect-1.c
+#      gcc.c-torture/execute/foo.c   -> execute.exp=foo.c
+ARGS=""
+for arg in "$@"; do
+  # Strip optional gcc/testsuite/ prefix
+  arg="${arg#gcc/testsuite/}"
+
+  file="$(basename "$arg")"
+  dir="$(dirname "$arg")"
+  # The .exp file name matches the innermost directory component
+  expname="$(basename "$dir")"
+  # Strip "gcc." or "gcc-" prefix (gcc.dg -> dg, gcc.c-torture stays as parent)
+  expname="${expname#gcc.}"
+  expname="${expname#gcc-}"
+
+  ARGS="$ARGS ${expname}.exp=${file}"
+done
+
+cd "$GCC_PROJECT_ROOT/build/gcc"
+make check-gcc RUNTESTFLAGS="$ARGS"

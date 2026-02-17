@@ -15,6 +15,7 @@ Installs the following packages:
   - isl-devel       Integer Set Library (for loop optimization)
   - clang           C/C++ compiler and clang-format for code formatting
   - python3         Required for build scripts and clang-format-diff
+  - dejagnu         DejaGnu testing framework (runtest) for GCC tests
 
 Options:
   -h, --help  Show this help message
@@ -51,7 +52,8 @@ sudo $PACKAGE_MANAGER install -y \
   libmpc-devel \
   isl-devel \
   clang \
-  python3
+  python3 \
+  dejagnu
 
 echo "Dependencies installed successfully."
 echo

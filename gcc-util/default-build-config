@@ -1,7 +1,7 @@
 --prefix=$HOME/gcc/install
 --enable-languages=c,c++,fortran,lto
 --enable-lto
---enable-multilib
+--disable-multilib
 --enable-threads=posix
 --enable-libstdcxx-time=yes
 --enable-libstdcxx-threads=yes
