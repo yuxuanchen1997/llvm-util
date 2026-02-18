@@ -61,6 +61,17 @@ if [ -z "$1" ]; then
   exit 2
 fi
 
+# If CWD is under a GCC source tree, reroute to gcc-util.
+if [ -z "$LLVM_PROJECT_ROOT" ]; then
+  _cwd=$(pwd)
+  while [[ "$_cwd" != "/" ]]; do
+    if [ -f "$_cwd/gcc/BASE-VER" ]; then
+      exec "$LLVM_UTIL_ROOT/gcc-util/main" "$@"
+    fi
+    _cwd=$(dirname "$_cwd")
+  done
+fi
+
 SUBCOMMAND="$1"
 SUBCOMMAND_PATH="$LLVM_UTIL_ROOT/subcommands/$SUBCOMMAND"
 
