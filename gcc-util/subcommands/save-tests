@@ -1,0 +1,62 @@
+#!/bin/sh
+
+set -e
+
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") <label>
+
+Save test summary (.sum) files from the current build with a label.
+
+Copies all .sum files from the build testsuite directory into
+\$GCC_PROJECT_ROOT/test-results/<label>/.
+
+Arguments:
+  label  A name for this test snapshot (e.g., "master", "my-patch")
+
+Options:
+  -h, --help  Show this help message
+
+Examples:
+  $(basename "$0") master        # Save baseline results
+  $(basename "$0") my-feature    # Save results after applying a patch
+EOF
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  usage
+  exit 0
+fi
+
+if [ -z "$1" ]; then
+  >&2 echo "Error: Missing required argument: label"
+  >&2 echo
+  usage >&2
+  exit 1
+fi
+
+LABEL="$1"
+RESULTS_DIR="$GCC_PROJECT_ROOT/test-results/$LABEL"
+
+if [ -d "$RESULTS_DIR" ]; then
+  >&2 echo "Overwriting existing results in $RESULTS_DIR"
+  rm -rf "$RESULTS_DIR"
+fi
+
+mkdir -p "$RESULTS_DIR"
+
+SUM_COUNT=0
+for f in $(find "$GCC_BUILD_DIR" -name "*.sum" 2>/dev/null); do
+  cp "$f" "$RESULTS_DIR/"
+  SUM_COUNT=$((SUM_COUNT + 1))
+done
+
+if [ "$SUM_COUNT" -eq 0 ]; then
+  >&2 echo "Error: No .sum files found in $GCC_BUILD_DIR"
+  >&2 echo "Have you run 'check' yet?"
+  rmdir "$RESULTS_DIR" 2>/dev/null
+  exit 1
+fi
+
+echo "Saved $SUM_COUNT .sum file(s) to $RESULTS_DIR"
+ls "$RESULTS_DIR"

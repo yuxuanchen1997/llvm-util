@@ -1,0 +1,61 @@
+#!/bin/sh
+
+set -e
+
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") <before> <after>
+
+Compare two saved test snapshots using contrib/compare_tests.
+
+Arguments:
+  before  Label of the baseline test snapshot
+  after   Label of the current test snapshot
+
+Options:
+  -h, --help  Show this help message
+
+Examples:
+  $(basename "$0") master my-feature
+  $(basename "$0") v1 v2
+EOF
+}
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  usage
+  exit 0
+fi
+
+if [ -z "$2" ]; then
+  >&2 echo "Error: Must specify both <before> and <after> labels"
+  >&2 echo
+  usage >&2
+  exit 1
+fi
+
+BEFORE="$GCC_PROJECT_ROOT/test-results/$1"
+AFTER="$GCC_PROJECT_ROOT/test-results/$2"
+
+if [ ! -d "$BEFORE" ]; then
+  >&2 echo "Error: No saved results for '$1'"
+  >&2 echo "Run 'save-tests $1' first."
+  exit 1
+fi
+
+if [ ! -d "$AFTER" ]; then
+  >&2 echo "Error: No saved results for '$2'"
+  >&2 echo "Run 'save-tests $2' first."
+  exit 1
+fi
+
+COMPARE_SCRIPT="$GCC_PROJECT_ROOT/contrib/compare_tests"
+
+if [ ! -x "$COMPARE_SCRIPT" ]; then
+  >&2 echo "Error: $COMPARE_SCRIPT not found or not executable"
+  exit 1
+fi
+
+echo "Comparing '$1' (before) vs '$2' (after)..."
+echo
+
+"$COMPARE_SCRIPT" "$BEFORE" "$AFTER"

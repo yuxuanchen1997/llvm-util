@@ -20,6 +20,8 @@ Subcommands:
   format      Format code changes using clang-format-diff
   show-path    Print the path to a built binary
   install-deps  Install required build dependencies (Fedora)
+  save-tests    Save test .sum files with a label
+  compare-tests Compare two saved test snapshots
 
 Options:
   -h, --help  Show this help message
