@@ -4,22 +4,23 @@ set -e
 
 usage() {
   cat <<EOF
-Usage: $(basename "$0") [make-targets...]
+Usage: $(basename "$0") [targets...]
 
-Perform an incremental build using make.
+Perform an incremental build.
 
+Uses ninja (CMake) if gcc-cmake is detected, otherwise make (autotools).
 If the build directory does not exist, runs a full rebuild first.
 
 Arguments:
-  make-targets  Optional make targets to build
+  targets  Optional build targets
 
 Options:
   -h, --help     Show this help message
 
 Examples:
   $(basename "$0")           # Build all targets
-  $(basename "$0") gcc       # Build only gcc
-  $(basename "$0") -j4       # Build with 4 parallel jobs
+  $(basename "$0") cc1       # Build only cc1
+  $(basename "$0") -j4       # Build with 4 parallel jobs (autotools only)
 EOF
 }
 
@@ -29,12 +30,21 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 fi
 
 # If build directory doesn't exist, run a full rebuild first
-if [ ! -d "$GCC_PROJECT_ROOT/build" ]; then
+if [ ! -d "$GCC_BUILD_DIR" ]; then
   >&2 echo "Build directory does not exist. Running full rebuild first..."
   "$GCC_UTIL_ROOT/subcommands/rebuild" "$@"
   exit 0
 fi
 
-cd "$GCC_PROJECT_ROOT/build"
-make "$@"
-make install
+if [ "$GCC_USE_CMAKE" = "1" ]; then
+  if [ $# -eq 0 ]; then
+    ninja -C "$GCC_BUILD_DIR" cc1 cc1plus xgcc xg++
+  else
+    ninja -C "$GCC_BUILD_DIR" "$@"
+  fi
+  cmake --install "$GCC_BUILD_DIR" --prefix "$GCC_INSTALL_DIR"
+else
+  cd "$GCC_BUILD_DIR"
+  make "$@"
+  make install
+fi

@@ -34,4 +34,4 @@ if [ -z "$1" ]; then
 fi
 
 "$GCC_UTIL_ROOT/subcommands/build"
-exec gdb --args "$GCC_PROJECT_ROOT/install/bin/$1" "${@:2}"
+exec gdb --args "$GCC_INSTALL_DIR/bin/$1" "${@:2}"

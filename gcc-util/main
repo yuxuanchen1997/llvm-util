@@ -10,10 +10,10 @@ Usage: $(basename "$0") <subcommand> [args...]
 GCC project build utility.
 
 Subcommands:
-  build       Incremental build using make
-  rebuild     Full clean build with configure
+  build       Incremental build using ninja (CMake) or make (autotools)
+  rebuild     Full clean build with CMake or configure
   clean       Remove the build directory
-  check       Run test suites (make check-<target>)
+  check       Run test suites (check-<target>)
   run         Build and execute a binary
   debug       Build and launch a binary in gdb
   test        Run tests using dejagnu
@@ -71,5 +71,18 @@ if ! [ -f "$SUBCOMMAND_PATH" ]; then
 fi
 
 set_gcc_project_root
+
+# Detect build system: prefer gcc-cmake if present, fall back to autotools.
+if [ -d "$GCC_PROJECT_ROOT/gcc-cmake" ]; then
+  export GCC_USE_CMAKE=1
+  export GCC_BUILD_DIR="$GCC_PROJECT_ROOT/build"
+  export GCC_INSTALL_DIR="$GCC_PROJECT_ROOT/install"
+  >&2 echo "Build system: CMake (gcc-cmake detected)"
+else
+  export GCC_USE_CMAKE=0
+  export GCC_BUILD_DIR="$GCC_PROJECT_ROOT/build"
+  export GCC_INSTALL_DIR="$GCC_PROJECT_ROOT/install"
+  >&2 echo "Build system: autotools"
+fi
 
 "$SUBCOMMAND_PATH" "${@:2}"

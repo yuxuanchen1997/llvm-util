@@ -53,5 +53,10 @@ for arg in "$@"; do
   ARGS="$ARGS ${expname}.exp=${file}"
 done
 
-cd "$GCC_PROJECT_ROOT/build/gcc"
-make check-gcc RUNTESTFLAGS="$ARGS"
+if [ "$GCC_USE_CMAKE" = "1" ]; then
+  cd "$GCC_BUILD_DIR/testsuite/gcc"
+  runtest --tool gcc $ARGS
+else
+  cd "$GCC_BUILD_DIR/gcc"
+  make check-gcc RUNTESTFLAGS="$ARGS"
+fi

@@ -26,4 +26,4 @@ if [ -z "$GCC_PROJECT_ROOT" ]; then
   exit 1
 fi
 
-rm -rf "$GCC_PROJECT_ROOT/build/"
+rm -rf "$GCC_BUILD_DIR"

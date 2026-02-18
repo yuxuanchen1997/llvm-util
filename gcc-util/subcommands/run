@@ -35,4 +35,4 @@ if [ -z "$1" ]; then
 fi
 
 "$GCC_UTIL_ROOT/subcommands/build"
-"$GCC_PROJECT_ROOT/install/bin/$1" "${@:2}"
+"$GCC_INSTALL_DIR/bin/$1" "${@:2}"
