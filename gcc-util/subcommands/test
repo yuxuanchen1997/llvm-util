@@ -49,7 +49,20 @@ else
   cd "$GCC_BUILD_DIR/$TOOL"
 fi
 
-# Run each test individually to handle subdirectory tests correctly
+# Temporary file for results
+TMPFILE=$(mktemp)
+trap "rm -f $TMPFILE" EXIT
+
+# Run each test individually and collect results
+TOTAL_PASS=0
+TOTAL_FAIL=0
+TOTAL_XPASS=0
+TOTAL_XFAIL=0
+
+echo ""
+printf "%-60s %s\n" "TEST" "STATUS"
+printf "%-60s %s\n" "----" "------"
+
 for arg in "$@"; do
   arg="${arg#gcc/testsuite/}"
   file="$(basename "$arg")"
@@ -64,5 +77,64 @@ for arg in "$@"; do
     expname="${expname#gcc-}"
     expname="${expname#g++-}"
   fi
-  runtest --tool "$TOOL" ${expname}.exp=${file}
+  
+  # Run test and capture output
+  runtest --tool "$TOOL" ${expname}.exp=${file} > "$TMPFILE" 2>&1 || true
+  
+  # Parse results from .sum file
+  SUMFILE=$(find . -name "${TOOL}.sum" -mmin -1 | head -1)
+  if [ -n "$SUMFILE" ]; then
+    PASS_COUNT=$(grep -c "^PASS:" "$SUMFILE" 2>/dev/null || true)
+    PASS_COUNT=${PASS_COUNT:-0}
+    FAIL_COUNT=$(grep -c "^FAIL:" "$SUMFILE" 2>/dev/null || true)
+    FAIL_COUNT=${FAIL_COUNT:-0}
+    XPASS_COUNT=$(grep -c "^XPASS:" "$SUMFILE" 2>/dev/null || true)
+    XPASS_COUNT=${XPASS_COUNT:-0}
+    XFAIL_COUNT=$(grep -c "^XFAIL:" "$SUMFILE" 2>/dev/null || true)
+    XFAIL_COUNT=${XFAIL_COUNT:-0}
+    UNRESOLVED_COUNT=$(grep -c "^UNRESOLVED:" "$SUMFILE" 2>/dev/null || true)
+    UNRESOLVED_COUNT=${UNRESOLVED_COUNT:-0}
+    ERROR_COUNT=$(grep -c "^ERROR:" "$SUMFILE" 2>/dev/null || true)
+    ERROR_COUNT=${ERROR_COUNT:-0}
+  else
+    PASS_COUNT=0
+    FAIL_COUNT=0
+    XPASS_COUNT=0
+    XFAIL_COUNT=0
+    UNRESOLVED_COUNT=0
+    ERROR_COUNT=0
+  fi
+  
+  # Determine status
+  if [ "$FAIL_COUNT" -gt 0 ] || [ "$UNRESOLVED_COUNT" -gt 0 ] || [ "$ERROR_COUNT" -gt 0 ]; then
+    STATUS="FAIL"
+    TOTAL_FAIL=$((TOTAL_FAIL + 1))
+  elif [ "$XPASS_COUNT" -gt 0 ]; then
+    STATUS="XPASS"
+    TOTAL_XPASS=$((TOTAL_XPASS + 1))
+  elif [ "$XFAIL_COUNT" -gt 0 ]; then
+    STATUS="XFAIL"
+    TOTAL_XFAIL=$((TOTAL_XFAIL + 1))
+  elif [ "$PASS_COUNT" -gt 0 ]; then
+    STATUS="PASS"
+    TOTAL_PASS=$((TOTAL_PASS + 1))
+  else
+    STATUS="NO RESULTS"
+  fi
+  
+  printf "%-60s %s\n" "$arg" "$STATUS"
 done
+
+echo ""
+printf "%-60s %s\n" "----" "------"
+echo "Summary:"
+echo "  PASS:    $TOTAL_PASS"
+echo "  FAIL:    $TOTAL_FAIL"
+echo "  XPASS:   $TOTAL_XPASS"
+echo "  XFAIL:   $TOTAL_XFAIL"
+echo ""
+
+# Exit with error if any tests failed
+if [ "$TOTAL_FAIL" -gt 0 ]; then
+  exit 1
+fi
