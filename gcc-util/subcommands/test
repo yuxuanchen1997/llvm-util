@@ -16,8 +16,7 @@ Options:
 
 Examples:
   $(basename "$0") gcc.dg/ifcvt-fabs-1.c
-  $(basename "$0") gcc.dg/vect/vect-1.c
-  $(basename "$0") gcc.c-torture/execute/20000113-1.c
+  $(basename "$0") g++.dg/cpp0x/attr-trivial_abi1.C
 EOF
 }
 
@@ -33,30 +32,37 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-# Convert file paths to dejagnu RUNTESTFLAGS format.
-# e.g. gcc.dg/ifcvt-fabs-1.c       -> dg.exp=ifcvt-fabs-1.c
-#      gcc.dg/vect/vect-1.c         -> vect.exp=vect-1.c
-#      gcc.c-torture/execute/foo.c   -> execute.exp=foo.c
-ARGS=""
+# Detect if tests are g++ or gcc based on file paths
+TOOL="gcc"
 for arg in "$@"; do
-  # Strip optional gcc/testsuite/ prefix
-  arg="${arg#gcc/testsuite/}"
-
-  file="$(basename "$arg")"
-  dir="$(dirname "$arg")"
-  # The .exp file name matches the innermost directory component
-  expname="$(basename "$dir")"
-  # Strip "gcc." or "gcc-" prefix (gcc.dg -> dg, gcc.c-torture stays as parent)
-  expname="${expname#gcc.}"
-  expname="${expname#gcc-}"
-
-  ARGS="$ARGS ${expname}.exp=${file}"
+  case "$arg" in
+    *g++.dg*|*g++.old-deja*)
+      TOOL="g++"
+      break
+      ;;
+  esac
 done
 
 if [ "$GCC_USE_CMAKE" = "1" ]; then
-  cd "$GCC_BUILD_DIR/testsuite/gcc"
-  runtest --tool gcc $ARGS
+  cd "$GCC_BUILD_DIR/testsuite/$TOOL"
 else
-  cd "$GCC_BUILD_DIR/gcc"
-  make check-gcc RUNTESTFLAGS="$ARGS"
+  cd "$GCC_BUILD_DIR/$TOOL"
 fi
+
+# Run each test individually to handle subdirectory tests correctly
+for arg in "$@"; do
+  arg="${arg#gcc/testsuite/}"
+  file="$(basename "$arg")"
+  dir="$(dirname "$arg")"
+  # Get the dg/old-deja/etc part (first component after gcc./g++.)
+  expname="$(echo "$dir" | sed -n 's/^[^.]*\.\([^/]*\).*/\1/p')"
+  expname="${expname#gcc}"
+  expname="${expname#g++}"
+  # If no dot notation, use the first directory component
+  if [ -z "$expname" ]; then
+    expname="$(echo "$dir" | cut -d/ -f1)"
+    expname="${expname#gcc-}"
+    expname="${expname#g++-}"
+  fi
+  runtest --tool "$TOOL" ${expname}.exp=${file}
+done
